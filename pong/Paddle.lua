@@ -6,7 +6,8 @@ function Paddle:init(x, y, width, height)
     self.y = y 
     self.width = width 
     self.height = height 
-    self.dy = 0 
+    self.dy = 0
+    self.score = 0
 end
 
 function Paddle:update(dt)
