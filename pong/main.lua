@@ -20,13 +20,20 @@ function love.load()
     math.randomseed(os.time())
 
     smallFont = love.graphics.newFont('font.ttf', 8)
+    largeFont = love.graphics.newFont('font.ttf', 16)
     scoreFont = love.graphics.newFont('font.ttf', 32)
 
     love.graphics.setFont(smallFont)
 
+    sounds = {
+        ['paddle_hit'] = love.audio.newSource('sounds/paddle_hit.wav', 'static')
+        -- ['score'] = love.audio.newSource('sounds/score.wav', 'static'),
+        -- ['wall_hit'] = love.audio.newSource('sounds/wall_hit.wav', 'static')
+    }
+
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
-        resizable = false,
+        resizable = true,
         vsync = true
     })
 
@@ -39,6 +46,10 @@ function love.load()
 
     -- set game state
     gameState = 'start'
+end
+
+function love.resize(w, h)
+    push:resize(w, h)
 end
 
 function love.update(dt)
@@ -55,16 +66,28 @@ function love.update(dt)
         if ball.x + ball.width < player1.x then 
             servingPlayer = 1
             player2.score = player2.score + 1
-            ball:reset()
-            gameState = 'serve'
+
+            if player2.score == 7 then 
+                winningPlayer = 2
+                gameState = 'win'
+            else
+                ball:reset()
+                gameState = 'serve'
+            end
         end
 
         -- collision with right (player 1 score)
         if ball.x > player2.x + player2.width then 
             servingPlayer = 2
             player1.score = player1.score + 1
-            ball:reset()
-            gameState = 'serve'
+
+            if player1.score == 7 then 
+                winningPlayer = 1
+                gameState = 'win'
+            else
+                ball:reset()
+                gameState = 'serve'
+            end
         end
 
         if ball:collides(player1) then 
@@ -76,6 +99,8 @@ function love.update(dt)
             else 
                 ball.dy = math.random(10, 150)
             end
+
+            sounds['paddle_hit']:play()
         end
         if ball:collides(player2) then 
             ball.dx = -ball.dx * 1.03
@@ -86,6 +111,8 @@ function love.update(dt)
             else 
                 ball.dy = math.random(10, 150)
             end
+
+            sounds['paddle_hit']:play()
         end
 
         -- collision with top of screen
@@ -133,6 +160,19 @@ function love.keypressed(key)
             gameState = 'serve'
         elseif gameState == 'serve' then 
             gameState = 'play'
+        elseif gameState == 'win' then 
+            gameState = 'serve'
+
+            ball:reset()
+
+            player1.score = 0
+            player2.score = 0
+
+            if winningPlayer == 1 then 
+                servingPlayer = 2
+            else 
+                servingPlayer = 1
+            end
         end
     end
 end
@@ -145,14 +185,17 @@ function love.draw()
     love.graphics.setFont(smallFont)
     if gameState == 'start' then
         love.graphics.printf('Hello Pong!', 0, 20, VIRTUAL_WIDTH, 'center')
+        displayScores()
     elseif gameState == 'serve' then 
         love.graphics.printf('Player ' .. tostring(servingPlayer) .. ' to serve', 0, 20, VIRTUAL_WIDTH, 'center')
+        displayScores()
+    elseif gameState == 'win' then 
+        love.graphics.setFont(largeFont)
+        love.graphics.printf('Player ' .. tostring(winningPlayer) .. ' wins!', 0, 20, VIRTUAL_WIDTH, 'center')
+        displayScores()
+    elseif gameState == 'play' then 
+        -- print nothing
     end
-
-    -- draw scores
-    love.graphics.setFont(scoreFont)
-    love.graphics.print(tostring(player1.score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
-    love.graphics.print(tostring(player2.score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 
     player1:render()
     player2:render()
@@ -167,4 +210,11 @@ function displayFPS()
     love.graphics.setFont(smallFont)
     love.graphics.setColor(0, 255/255, 0, 255/255)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10)
+end
+
+function displayScores()
+    -- draw scores
+    love.graphics.setFont(scoreFont)
+    love.graphics.print(tostring(player1.score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
+    love.graphics.print(tostring(player2.score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 end
