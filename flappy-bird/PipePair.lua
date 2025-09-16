@@ -6,14 +6,13 @@ function PipePair:init(y)
     self.x = VIRTUAL_WIDTH + 32
     self.y = y
 
-    -- TODO: finish implementing constructor
     self.pipes = {
-        ['upper'] = Pipe('top', ???),
-        ['lower'] = Pipe('bottom', ???)
+        ['upper'] = Pipe('top', self.y),
+        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + GAP_HEIGHT)
     }
 
-    self.remove = ???
-    self.scored = ???
+    self.remove = false
+    self.scored = false
 end
 
 function PipePair:update(dt)

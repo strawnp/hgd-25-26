@@ -20,7 +20,7 @@ function PlayState:update(dt)
     -- update timer for pipe spawning
     self.timer = self.timer + dt
 
-    -- spawn a new pipe pair every second and a half
+    -- spawn a new pipe pair every two seconds
     if self.timer > 2 then
         -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
         -- no higher than 10 pixels below the top edge of the screen,
@@ -42,9 +42,8 @@ function PlayState:update(dt)
         -- be sure to ignore it if it's already been scored
         if not pair.scored then
             if pair.x + PIPE_WIDTH < self.bird.x then
-
-                -- TODO: add scoring logic 
-                
+                pair.scored = true 
+                self.score = self.score + 1
                 sounds['score']:play()
             end
         end
@@ -71,6 +70,9 @@ function PlayState:update(dt)
                 sounds['hurt']:play()
 
                 -- TODO: what state do we change to here and how?
+                gStateMachine:change('score', {
+                    score = self.score
+                })
             end
         end
     end

@@ -18,7 +18,7 @@ function Bird:collides(pipe)
     -- the 4's are right and bottom offsets
     -- both offsets are used to shrink the bounding box to give the player
     -- a little bit of leeway with the collision
-    if (self.x + 2) + (self.width - 4) >= pipe.x and self.x + 2 <= pipe.x + PIPE_WIDTH then
+    if (self.x + 2) + (self.width - 6) >= pipe.x and self.x + 2 <= pipe.x + PIPE_WIDTH then
         if (self.y + 2) + (self.height - 4) >= pipe.y and self.y + 2 <= pipe.y + PIPE_HEIGHT then
             return true
         end
@@ -30,8 +30,7 @@ end
 function Bird:update(dt)
     self.dy = self.dy + GRAVITY * dt 
 
-    -- TODO: add mouse functionality
-    if love.keyboard.wasPressed('space') then 
+    if love.keyboard.wasPressed('space') or love.mouse.wasPressed(1) then 
         self.dy = -1
         sounds['jump']:play()
     end
@@ -42,5 +41,10 @@ end
 function Bird:render()
     love.graphics.draw(self.image, self.x, self.y)
 
-    -- TODO: add debug option for printing hitbox
+    debug = false 
+
+    if debug then 
+        love.graphics.setColor(1, 0, 0, 1)
+        love.graphics.rectangle('line', self.x + 2, self.y + 2, self.width - 6, self.height - 4)
+    end
 end
