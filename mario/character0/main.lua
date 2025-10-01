@@ -31,6 +31,8 @@ SKY = 2
 GROUND = 1
 
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest')
+
     math.randomseed(os.time())
 
     tiles = {}
@@ -68,8 +70,7 @@ function love.load()
         end
     end
 
-    love.graphics.setDefaultFilter('nearest', 'nearest')
-    love.window.setTitle('tiles0')
+    love.window.setTitle('character0')
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,

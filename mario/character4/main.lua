@@ -38,6 +38,8 @@ SKY = 2
 GROUND = 1
 
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest')
+
     math.randomseed(os.time())
 
     tiles = {}
@@ -62,6 +64,10 @@ function love.load()
     jumpAnimation = Animation {
         frames = {3},
         interval = 1
+    }
+    emoteAnimation = Animation {
+        frames = {10, 10, 10, 11, 11, 11, 11, 11, 10, 10, 10, 4, 4, 11, 11},
+        interval = 0.02
     }
 
     currentAnimation = idleAnimation
@@ -97,7 +103,6 @@ function love.load()
         end
     end
 
-    love.graphics.setDefaultFilter('nearest', 'nearest')
     love.window.setTitle('tiles0')
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -154,6 +159,8 @@ function love.update(dt)
         end
 
         direction = 'right'
+    elseif love.keyboard.isDown('e') then 
+        currentAnimation = emoteAnimation
     else
         currentAnimation = idleAnimation
     end

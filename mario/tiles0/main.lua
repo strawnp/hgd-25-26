@@ -46,7 +46,7 @@ function love.load()
         for x = 1, mapWidth do
             -- sky and bricks; this ID directly maps to whatever quad we want to render
             table.insert(tiles[y], {
-                id = y < 5 and SKY or GROUND
+                id = y < 8 and SKY or GROUND
             })
         end
     end
